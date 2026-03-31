@@ -110,6 +110,7 @@ const historyIcons = {
 };
 
 export default function Contatos() {
+  const { currentUser, isAdmin } = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -123,7 +124,8 @@ export default function Contatos() {
       l.phone.includes(search) ||
       l.email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "Todos" || l.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchUser = isAdmin || l.assignedTo === currentUser.id;
+    return matchSearch && matchStatus && matchUser;
   });
 
   const handleAddLead = () => {
