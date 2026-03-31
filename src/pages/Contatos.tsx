@@ -32,7 +32,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "2", name: "João Santos", phone: "(21) 98888-5678", email: "joao@email.com",
-    status: "Em Contato", origin: "Indicação", createdAt: "25/03/2026", notes: "Retornar na sexta-feira.",
+    status: "Em Contato", origin: "Indicação", createdAt: "25/03/2026", notes: "Retornar na sexta-feira.", assignedTo: "u3",
     history: [
       { action: "Ligação realizada — sem resposta", date: "27/03 14:00", icon: "phone" },
       { action: "Lead adicionado por indicação", date: "25/03 09:00", icon: "note" },
