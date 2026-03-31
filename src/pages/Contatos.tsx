@@ -284,7 +284,8 @@ export default function Contatos() {
                     <div className="flex items-center gap-2 text-muted-foreground"><Phone className="h-3.5 w-3.5" /> {selectedLead.phone}</div>
                     <div className="flex items-center gap-2 text-muted-foreground"><Mail className="h-3.5 w-3.5" /> {selectedLead.email}</div>
                     <div className="flex items-center gap-2 text-muted-foreground"><User className="h-3.5 w-3.5" /> Origem: {selectedLead.origin}</div>
-                    <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> Criado em {selectedLead.createdAt}</div>
+                     <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> Criado em {selectedLead.createdAt}</div>
+                     <div className="flex items-center gap-2 text-muted-foreground"><User className="h-3.5 w-3.5" /> Responsável: {mockUsers.find((u) => u.id === selectedLead.assignedTo)?.name || "—"}</div>
                     <Badge variant="outline" className={`text-xs w-fit ${statusBadge[selectedLead.status] || ""}`}>{selectedLead.status}</Badge>
                   </div>
                 </div>
