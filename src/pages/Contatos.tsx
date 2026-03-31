@@ -139,6 +139,7 @@ export default function Contatos() {
       origin: newLead.origin,
       createdAt: new Date().toLocaleDateString("pt-BR"),
       notes: "",
+      assignedTo: currentUser.id,
       history: [{ action: "Lead adicionado manualmente", date: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }), icon: "note" }],
     };
     setLeads((prev) => [lead, ...prev]);
