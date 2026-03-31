@@ -289,7 +289,10 @@ export default function Pipeline() {
                           <Phone className="h-3 w-3" />
                           {lead.phone}
                         </p>
-                        <div className="mt-2 flex items-center justify-between">
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          Resp: {mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}
+                        </p>
+                        <div className="mt-1.5 flex items-center justify-between">
                           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${tagColors[lead.tag] || ""}`}>
                             {lead.tag}
                           </Badge>
