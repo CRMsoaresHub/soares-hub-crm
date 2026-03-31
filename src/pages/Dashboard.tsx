@@ -1,33 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, DollarSign, TrendingUp, CheckCircle } from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Users, UserCheck, Clock, DollarSign, MessageCircle, UserPlus, Phone, Mail } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
 
 const stats = [
-  { label: "Total de Leads", value: "248", icon: Users, change: "+12%" },
-  { label: "Vendas do Mês", value: "R$ 45.800", icon: DollarSign, change: "+8%" },
-  { label: "Taxa de Conversão", value: "23%", icon: TrendingUp, change: "+3%" },
-  { label: "Fechados", value: "57", icon: CheckCircle, change: "+15%" },
+  { label: "Total de Leads", value: "248", icon: Users, change: "+12% vs mês anterior" },
+  { label: "Leads Convertidos", value: "57", icon: UserCheck, change: "+15% vs mês anterior" },
+  { label: "Leads em Andamento", value: "134", icon: Clock, change: "+5% vs mês anterior" },
+  { label: "Receita Estimada", value: "R$ 89.500", icon: DollarSign, change: "+8% vs mês anterior" },
 ];
 
-const recentLeads = [
-  { name: "Maria Silva", email: "maria@email.com", status: "Novo", date: "Hoje" },
-  { name: "João Santos", email: "joao@email.com", status: "Em Negociação", date: "Ontem" },
-  { name: "Ana Costa", email: "ana@email.com", status: "Qualificado", date: "2 dias" },
-  { name: "Pedro Lima", email: "pedro@email.com", status: "Novo", date: "3 dias" },
-  { name: "Carla Souza", email: "carla@email.com", status: "Fechado", date: "4 dias" },
+const chartData = [
+  { dia: "01/03", leads: 8 },
+  { dia: "05/03", leads: 14 },
+  { dia: "09/03", leads: 11 },
+  { dia: "13/03", leads: 19 },
+  { dia: "17/03", leads: 16 },
+  { dia: "21/03", leads: 23 },
+  { dia: "25/03", leads: 28 },
+  { dia: "29/03", leads: 21 },
 ];
 
-const statusColor: Record<string, string> = {
-  Novo: "bg-info/10 text-info",
-  Qualificado: "bg-warning/10 text-warning",
-  "Em Negociação": "bg-primary/10 text-primary",
-  Fechado: "bg-success/10 text-success",
+const chartConfig = {
+  leads: {
+    label: "Leads",
+    color: "hsl(142 70% 49%)",
+  },
 };
+
+const activities = [
+  { icon: MessageCircle, text: "João respondeu no WhatsApp", time: "Há 5 min", color: "text-primary" },
+  { icon: UserPlus, text: "Novo lead adicionado: Maria Silva", time: "Há 15 min", color: "text-primary" },
+  { icon: Phone, text: "Ligação realizada para Pedro Lima", time: "Há 30 min", color: "text-accent-foreground" },
+  { icon: UserCheck, text: "Lead Ana Costa convertido com sucesso", time: "Há 1h", color: "text-primary" },
+  { icon: Mail, text: "E-mail enviado para Carla Souza", time: "Há 2h", color: "text-muted-foreground" },
+  { icon: UserPlus, text: "Novo lead adicionado: Ricardo Ferreira", time: "Há 3h", color: "text-primary" },
+  { icon: MessageCircle, text: "Lucas Almeida respondeu no WhatsApp", time: "Há 4h", color: "text-primary" },
+  { icon: Phone, text: "Ligação agendada com Fernanda Dias", time: "Há 5h", color: "text-accent-foreground" },
+];
 
 export default function Dashboard() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
 
+      {/* Cards de resumo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
           <Card key={s.label}>
@@ -37,45 +54,54 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{s.value}</div>
-              <p className="text-xs text-primary mt-1">{s.change} vs mês anterior</p>
+              <p className="text-xs text-primary mt-1">{s.change}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Leads Recentes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-muted-foreground">
-                  <th className="text-left py-2 font-medium">Nome</th>
-                  <th className="text-left py-2 font-medium hidden sm:table-cell">Email</th>
-                  <th className="text-left py-2 font-medium">Status</th>
-                  <th className="text-right py-2 font-medium">Data</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentLeads.map((l) => (
-                  <tr key={l.email} className="border-b last:border-0">
-                    <td className="py-3 font-medium">{l.name}</td>
-                    <td className="py-3 text-muted-foreground hidden sm:table-cell">{l.email}</td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor[l.status] || ""}`}>
-                        {l.status}
-                      </span>
-                    </td>
-                    <td className="py-3 text-right text-muted-foreground">{l.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Gráfico + Atividades */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Gráfico de desempenho */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Leads ao Longo dos Dias</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px] w-full">
+              <BarChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="dia" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="leads" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        {/* Atividades recentes */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Atividades Recentes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+              {activities.map((a, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="mt-0.5 rounded-full bg-accent p-1.5">
+                    <a.icon className={`h-3.5 w-3.5 ${a.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground leading-tight">{a.text}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{a.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
