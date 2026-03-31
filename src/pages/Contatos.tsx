@@ -252,9 +252,9 @@ export default function Contatos() {
                      <td className="py-3 px-4 text-right text-muted-foreground hidden sm:table-cell">{l.createdAt}</td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="py-12 text-center text-muted-foreground">Nenhum contato encontrado.</td>
+                 {filtered.length === 0 && (
+                   <tr>
+                     <td colSpan={6} className="py-12 text-center text-muted-foreground">Nenhum contato encontrado.</td>
                   </tr>
                 )}
               </tbody>
