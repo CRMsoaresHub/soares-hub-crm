@@ -27,7 +27,7 @@ interface Lead {
 const initialLeads: Lead[] = [
   {
     id: "1", name: "Maria Silva", phone: "(11) 99999-1234", email: "maria@email.com",
-    status: "Novo", origin: "WhatsApp", createdAt: "28/03/2026", notes: "Interessada no plano premium.",
+    status: "Novo", origin: "WhatsApp", createdAt: "28/03/2026", notes: "Interessada no plano premium.", assignedTo: "u2",
     history: [{ action: "Lead adicionado via WhatsApp", date: "28/03 10:30", icon: "message" }],
   },
   {
