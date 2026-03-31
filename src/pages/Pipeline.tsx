@@ -39,9 +39,9 @@ const initialColumns: Column[] = [
     colorDot: "bg-info",
     bgCard: "border-l-info",
     leads: [
-      { id: "1", name: "Maria Silva", phone: "(11) 99999-1234", tag: "WhatsApp", initials: "MS" },
-      { id: "2", name: "Pedro Lima", phone: "(21) 98888-5678", tag: "Indicação", initials: "PL" },
-      { id: "3", name: "Lucas Mendes", phone: "(31) 97777-9012", tag: "Site", initials: "LM" },
+      { id: "1", name: "Maria Silva", phone: "(11) 99999-1234", tag: "WhatsApp", initials: "MS", assignedTo: "u2" },
+      { id: "2", name: "Pedro Lima", phone: "(21) 98888-5678", tag: "Indicação", initials: "PL", assignedTo: "u3" },
+      { id: "3", name: "Lucas Mendes", phone: "(31) 97777-9012", tag: "Site", initials: "LM", assignedTo: "u2" },
     ],
   },
   {
@@ -50,8 +50,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-warning",
     bgCard: "border-l-warning",
     leads: [
-      { id: "4", name: "Ana Costa", phone: "(11) 96666-3456", tag: "WhatsApp", initials: "AC" },
-      { id: "5", name: "Bruno Dias", phone: "(41) 95555-7890", tag: "Ligação", initials: "BD" },
+      { id: "4", name: "Ana Costa", phone: "(11) 96666-3456", tag: "WhatsApp", initials: "AC", assignedTo: "u2" },
+      { id: "5", name: "Bruno Dias", phone: "(41) 95555-7890", tag: "Ligação", initials: "BD", assignedTo: "u3" },
     ],
   },
   {
@@ -60,8 +60,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-primary",
     bgCard: "border-l-primary",
     leads: [
-      { id: "6", name: "João Santos", phone: "(11) 94444-1234", tag: "E-mail", initials: "JS" },
-      { id: "7", name: "Carla Souza", phone: "(51) 93333-5678", tag: "WhatsApp", initials: "CS" },
+      { id: "6", name: "João Santos", phone: "(11) 94444-1234", tag: "E-mail", initials: "JS", assignedTo: "u3" },
+      { id: "7", name: "Carla Souza", phone: "(51) 93333-5678", tag: "WhatsApp", initials: "CS", assignedTo: "u2" },
     ],
   },
   {
@@ -70,7 +70,7 @@ const initialColumns: Column[] = [
     colorDot: "bg-accent-foreground",
     bgCard: "border-l-accent-foreground",
     leads: [
-      { id: "8", name: "Fernanda Alves", phone: "(11) 92222-9012", tag: "Reunião", initials: "FA" },
+      { id: "8", name: "Fernanda Alves", phone: "(11) 92222-9012", tag: "Reunião", initials: "FA", assignedTo: "u2" },
     ],
   },
   {
@@ -79,8 +79,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-primary",
     bgCard: "border-l-primary",
     leads: [
-      { id: "9", name: "Ricardo Ferreira", phone: "(21) 91111-3456", tag: "Contrato", initials: "RF" },
-      { id: "10", name: "Patrícia Rocha", phone: "(11) 90000-7890", tag: "Contrato", initials: "PR" },
+      { id: "9", name: "Ricardo Ferreira", phone: "(21) 91111-3456", tag: "Contrato", initials: "RF", assignedTo: "u3" },
+      { id: "10", name: "Patrícia Rocha", phone: "(11) 90000-7890", tag: "Contrato", initials: "PR", assignedTo: "u2" },
     ],
   },
 ];
