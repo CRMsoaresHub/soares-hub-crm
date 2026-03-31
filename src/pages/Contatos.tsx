@@ -49,7 +49,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "4", name: "Pedro Lima", phone: "(31) 97777-9012", email: "pedro@email.com",
-    status: "Negociação", origin: "Ligação", createdAt: "15/03/2026", notes: "Negociando desconto de 10%.",
+    status: "Negociação", origin: "Ligação", createdAt: "15/03/2026", notes: "Negociando desconto de 10%.", assignedTo: "u3",
     history: [
       { action: "Contraproposta recebida", date: "28/03 09:00", icon: "mail" },
       { action: "Proposta enviada", date: "22/03 16:00", icon: "mail" },
