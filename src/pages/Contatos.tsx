@@ -69,7 +69,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "6", name: "Ricardo Ferreira", phone: "(11) 91111-2222", email: "ricardo@email.com",
-    status: "Novo", origin: "Site", createdAt: "29/03/2026", notes: "",
+    status: "Novo", origin: "Site", createdAt: "29/03/2026", notes: "", assignedTo: "u3",
     history: [{ action: "Lead captado pelo formulário do site", date: "29/03 08:00", icon: "note" }],
   },
   {
