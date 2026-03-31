@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Search, Plus, Phone, Mail, MessageCircle, Calendar, Clock, User, StickyNote } from "lucide-react";
+import { useUser, mockUsers } from "@/contexts/UserContext";
 
 interface Lead {
   id: string;
