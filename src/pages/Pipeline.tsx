@@ -160,6 +160,7 @@ export default function Pipeline() {
       phone: newLead.phone || "(00) 00000-0000",
       tag: newLead.tag,
       initials,
+      assignedTo: currentUser.id,
     };
 
     setColumns((prev) =>
