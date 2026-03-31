@@ -83,7 +83,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "8", name: "Lucas Mendes", phone: "(61) 95555-4444", email: "lucas@email.com",
-    status: "Proposta Enviada", origin: "Indicação", createdAt: "18/03/2026", notes: "Indicado pelo Ricardo.",
+    status: "Proposta Enviada", origin: "Indicação", createdAt: "18/03/2026", notes: "Indicado pelo Ricardo.", assignedTo: "u3",
     history: [
       { action: "Proposta enviada", date: "26/03 14:00", icon: "mail" },
       { action: "Reunião presencial", date: "24/03 10:00", icon: "phone" },
