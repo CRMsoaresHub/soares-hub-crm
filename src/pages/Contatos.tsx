@@ -20,6 +20,7 @@ interface Lead {
   origin: string;
   createdAt: string;
   notes: string;
+  assignedTo: string;
   history: { action: string; date: string; icon: "phone" | "message" | "mail" | "note" }[];
 }
 
