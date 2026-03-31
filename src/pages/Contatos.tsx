@@ -247,8 +247,9 @@ export default function Contatos() {
                     <td className="py-3 px-4">
                       <Badge variant="outline" className={`text-[11px] ${statusBadge[l.status] || ""}`}>{l.status}</Badge>
                     </td>
-                    <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{l.origin}</td>
-                    <td className="py-3 px-4 text-right text-muted-foreground hidden sm:table-cell">{l.createdAt}</td>
+                     <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{l.origin}</td>
+                     <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell text-sm">{mockUsers.find((u) => u.id === l.assignedTo)?.name || "—"}</td>
+                     <td className="py-3 px-4 text-right text-muted-foreground hidden sm:table-cell">{l.createdAt}</td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (
