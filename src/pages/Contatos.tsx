@@ -224,8 +224,9 @@ export default function Contatos() {
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground">Nome</th>
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden md:table-cell">Telefone</th>
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Origem</th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground hidden sm:table-cell">Criado em</th>
+                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Origem</th>
+                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Responsável</th>
+                   <th className="text-right py-3 px-4 font-medium text-muted-foreground hidden sm:table-cell">Criado em</th>
                 </tr>
               </thead>
               <tbody>
