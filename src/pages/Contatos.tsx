@@ -150,7 +150,14 @@ export default function Contatos() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-2xl font-bold text-foreground">Contatos</h2>
+      {!isAdmin && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          <User className="h-4 w-4" />
+          Exibindo apenas leads atribuídos a <span className="font-medium text-foreground">{currentUser.name}</span>
+        </div>
+      )}
+
+      <h2 className="text-2xl font-bold text-foreground">Contatos</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="gap-1.5">
