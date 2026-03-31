@@ -74,7 +74,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "7", name: "Fernanda Alves", phone: "(41) 94444-3333", email: "fernanda@email.com",
-    status: "Em Contato", origin: "E-mail", createdAt: "22/03/2026", notes: "Prefere contato por e-mail.",
+    status: "Em Contato", origin: "E-mail", createdAt: "22/03/2026", notes: "Prefere contato por e-mail.", assignedTo: "u2",
     history: [
       { action: "E-mail de follow-up enviado", date: "28/03 10:00", icon: "mail" },
       { action: "Primeiro e-mail enviado", date: "23/03 09:00", icon: "mail" },
