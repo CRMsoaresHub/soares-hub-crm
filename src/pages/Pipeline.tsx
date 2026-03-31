@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical } from "lucide-react";
+import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser, mockUsers } from "@/contexts/UserContext";
 
 interface Lead {
   id: string;
@@ -20,6 +21,7 @@ interface Lead {
   phone: string;
   tag: string;
   initials: string;
+  assignedTo: string;
 }
 
 interface Column {
