@@ -59,7 +59,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "5", name: "Carla Souza", phone: "(51) 93333-5678", email: "carla@email.com",
-    status: "Fechado", origin: "WhatsApp", createdAt: "10/03/2026", notes: "Contrato assinado. Cliente ativa.",
+    status: "Fechado", origin: "WhatsApp", createdAt: "10/03/2026", notes: "Contrato assinado. Cliente ativa.", assignedTo: "u2",
     history: [
       { action: "Contrato assinado", date: "27/03 10:00", icon: "note" },
       { action: "Proposta aceita", date: "25/03 14:00", icon: "mail" },
