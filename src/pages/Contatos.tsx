@@ -40,7 +40,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "3", name: "Ana Costa", phone: "(11) 96666-3456", email: "ana@email.com",
-    status: "Proposta Enviada", origin: "Site", createdAt: "20/03/2026", notes: "Aguardando retorno da proposta.",
+    status: "Proposta Enviada", origin: "Site", createdAt: "20/03/2026", notes: "Aguardando retorno da proposta.", assignedTo: "u2",
     history: [
       { action: "Proposta enviada por e-mail", date: "26/03 11:00", icon: "mail" },
       { action: "Reunião online realizada", date: "24/03 15:00", icon: "phone" },
