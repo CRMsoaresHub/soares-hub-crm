@@ -237,8 +237,15 @@ export default function Pipeline() {
         </Dialog>
       </div>
 
+      {!isAdmin && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          <User className="h-4 w-4" />
+          Exibindo apenas leads atribuídos a <span className="font-medium text-foreground">{currentUser.name}</span>
+        </div>
+      )}
+
       <div className="flex gap-4 overflow-x-auto pb-4">
-        {columns.map((col) => (
+        {visibleColumns.map((col) => (
           <div
             key={col.id}
             className={`min-w-[260px] w-[260px] flex-shrink-0 rounded-xl p-3 transition-colors ${
