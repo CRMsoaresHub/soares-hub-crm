@@ -7,20 +7,84 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { User, Users, Plug, Settings, Crown, Check, MessageCircle, Mail, Bell, BarChart3 } from "lucide-react";
+import { User, Users, Plug, Settings, Crown, Check, MessageCircle, Mail, Bell, BarChart3, Plus, Pencil, Trash2 } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+import type { UserRole } from "@/contexts/UserContext";
 
-const teamMembers = [
-  { name: "Rafael Soares", role: "Administrador", email: "rafael@soareshub.com", initials: "RS" },
-  { name: "Juliana Lima", role: "Vendedor", email: "juliana@soareshub.com", initials: "JL" },
-  { name: "Marcos Oliveira", role: "Vendedor", email: "marcos@soareshub.com", initials: "MO" },
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  roleLabel: string;
+  initials: string;
+  active: boolean;
+}
+
+const initialTeam: TeamMember[] = [
+  { id: "u1", name: "Rafael Soares", email: "rafael@soareshub.com", role: "admin", roleLabel: "Administrador", initials: "RS", active: true },
+  { id: "u2", name: "Juliana Costa", email: "juliana@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "JC", active: true },
+  { id: "u3", name: "Carlos Mendes", email: "carlos@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "CM", active: true },
+  { id: "u4", name: "Marcos Oliveira", email: "marcos@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "MO", active: false },
 ];
 
 export default function Configuracoes() {
+  const { currentUser, isAdmin } = useUser();
   const [selectedPlan, setSelectedPlan] = useState<"basico" | "pro">("basico");
-
+  const [team, setTeam] = useState<TeamMember[]>(initialTeam);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editMember, setEditMember] = useState<TeamMember | null>(null);
+  const [formData, setFormData] = useState({ name: "", email: "", role: "atendente" as UserRole });
   const handleSave = (section: string) => {
     toast.success(`${section} salvo com sucesso!`);
+  };
+
+  const handleAddMember = () => {
+    if (!formData.name.trim() || !formData.email.trim()) return;
+    const initials = formData.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    const member: TeamMember = {
+      id: Date.now().toString(),
+      name: formData.name,
+      email: formData.email,
+      role: formData.role,
+      roleLabel: formData.role === "admin" ? "Administrador" : "Atendente",
+      initials,
+      active: true,
+    };
+    setTeam((prev) => [...prev, member]);
+    setFormData({ name: "", email: "", role: "atendente" });
+    setAddDialogOpen(false);
+    toast.success("Usuário adicionado com sucesso!");
+  };
+
+  const handleEditMember = () => {
+    if (!editMember || !formData.name.trim()) return;
+    setTeam((prev) =>
+      prev.map((m) =>
+        m.id === editMember.id
+          ? { ...m, name: formData.name, email: formData.email, role: formData.role, roleLabel: formData.role === "admin" ? "Administrador" : "Atendente", initials: formData.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) }
+          : m
+      )
+    );
+    setEditMember(null);
+    setFormData({ name: "", email: "", role: "atendente" });
+    toast.success("Usuário atualizado!");
+  };
+
+  const handleRemoveMember = (id: string) => {
+    setTeam((prev) => prev.filter((m) => m.id !== id));
+    toast.success("Usuário removido!");
+  };
+
+  const toggleActive = (id: string) => {
+    setTeam((prev) => prev.map((m) => m.id === id ? { ...m, active: !m.active } : m));
+  };
+
+  const openEdit = (m: TeamMember) => {
+    setFormData({ name: m.name, email: m.email, role: m.role });
+    setEditMember(m);
   };
 
   return (
@@ -67,14 +131,41 @@ export default function Configuracoes() {
 
       {/* Equipe */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2"><Users className="h-5 w-5 text-primary" /> Equipe</CardTitle>
-          <CardDescription>Gerencie os membros da sua equipe</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg flex items-center gap-2"><Users className="h-5 w-5 text-primary" /> Equipe</CardTitle>
+            <CardDescription>Gerencie os membros da sua equipe</CardDescription>
+          </div>
+          {isAdmin && (
+            <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-1.5" onClick={() => setFormData({ name: "", email: "", role: "atendente" })}>
+                  <Plus className="h-4 w-4" /> Adicionar usuário
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Novo Usuário</DialogTitle></DialogHeader>
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-2"><Label>Nome</Label><Input placeholder="Nome completo" value={formData.name} onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))} /></div>
+                  <div className="space-y-2"><Label>E-mail</Label><Input placeholder="email@exemplo.com" value={formData.email} onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))} /></div>
+                  <div className="space-y-2">
+                    <Label>Tipo de usuário</Label>
+                    <div className="flex gap-2">
+                      {([["admin", "Administrador"], ["atendente", "Atendente"]] as const).map(([val, label]) => (
+                        <Badge key={val} variant={formData.role === val ? "default" : "outline"} className="cursor-pointer" onClick={() => setFormData((p) => ({ ...p, role: val }))}>{label}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <Button onClick={handleAddMember} className="w-full">Adicionar</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {teamMembers.map((m) => (
-              <div key={m.email} className="flex items-center justify-between py-2">
+          <div className="space-y-2">
+            {team.map((m) => (
+              <div key={m.id} className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${m.active ? "" : "opacity-50"}`}>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{m.initials}</AvatarFallback>
@@ -84,20 +175,50 @@ export default function Configuracoes() {
                     <p className="text-xs text-muted-foreground">{m.email}</p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-xs">{m.role}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`text-[11px] ${m.role === "admin" ? "bg-primary/10 text-primary border-primary/20" : ""}`}>{m.roleLabel}</Badge>
+                  <Badge variant="outline" className={`text-[10px] ${m.active ? "bg-primary/10 text-primary border-primary/20" : "bg-muted text-muted-foreground"}`}>
+                    {m.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                  {isAdmin && (
+                    <div className="flex gap-1 ml-1">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleActive(m.id)}>
+                        <Switch checked={m.active} className="scale-75" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(m)}>
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRemoveMember(m.id)}>
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
-          <Separator className="my-4" />
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 space-y-2">
-              <Label>Convidar membro</Label>
-              <Input placeholder="email@exemplo.com" />
-            </div>
-            <Button variant="outline" onClick={() => toast.success("Convite enviado!")}>Convidar</Button>
-          </div>
         </CardContent>
       </Card>
+
+      {/* Edit member dialog */}
+      <Dialog open={!!editMember} onOpenChange={(open) => !open && setEditMember(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar Usuário</DialogTitle></DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2"><Label>Nome</Label><Input value={formData.name} onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))} /></div>
+            <div className="space-y-2"><Label>E-mail</Label><Input value={formData.email} onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))} /></div>
+            <div className="space-y-2">
+              <Label>Tipo de usuário</Label>
+              <div className="flex gap-2">
+                {([["admin", "Administrador"], ["atendente", "Atendente"]] as const).map(([val, label]) => (
+                  <Badge key={val} variant={formData.role === val ? "default" : "outline"} className="cursor-pointer" onClick={() => setFormData((p) => ({ ...p, role: val }))}>{label}</Badge>
+                ))}
+              </div>
+            </div>
+            <Button onClick={handleEditMember} className="w-full">Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Integrações */}
       <Card>
