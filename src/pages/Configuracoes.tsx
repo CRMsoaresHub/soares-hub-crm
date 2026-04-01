@@ -7,13 +7,27 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { User, Users, Plug, Settings, Crown, Check, MessageCircle, Mail, Bell, BarChart3 } from "lucide-react";
+import { User, Users, Plug, Settings, Crown, Check, MessageCircle, Mail, Bell, BarChart3, Plus, Pencil, Trash2 } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+import type { UserRole } from "@/contexts/UserContext";
 
-const teamMembers = [
-  { name: "Rafael Soares", role: "Administrador", email: "rafael@soareshub.com", initials: "RS" },
-  { name: "Juliana Lima", role: "Vendedor", email: "juliana@soareshub.com", initials: "JL" },
-  { name: "Marcos Oliveira", role: "Vendedor", email: "marcos@soareshub.com", initials: "MO" },
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  roleLabel: string;
+  initials: string;
+  active: boolean;
+}
+
+const initialTeam: TeamMember[] = [
+  { id: "u1", name: "Rafael Soares", email: "rafael@soareshub.com", role: "admin", roleLabel: "Administrador", initials: "RS", active: true },
+  { id: "u2", name: "Juliana Costa", email: "juliana@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "JC", active: true },
+  { id: "u3", name: "Carlos Mendes", email: "carlos@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "CM", active: true },
+  { id: "u4", name: "Marcos Oliveira", email: "marcos@soareshub.com", role: "atendente", roleLabel: "Atendente", initials: "MO", active: false },
 ];
 
 export default function Configuracoes() {
