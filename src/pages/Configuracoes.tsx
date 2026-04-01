@@ -41,6 +41,52 @@ export default function Configuracoes() {
     toast.success(`${section} salvo com sucesso!`);
   };
 
+  const handleAddMember = () => {
+    if (!formData.name.trim() || !formData.email.trim()) return;
+    const initials = formData.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    const member: TeamMember = {
+      id: Date.now().toString(),
+      name: formData.name,
+      email: formData.email,
+      role: formData.role,
+      roleLabel: formData.role === "admin" ? "Administrador" : "Atendente",
+      initials,
+      active: true,
+    };
+    setTeam((prev) => [...prev, member]);
+    setFormData({ name: "", email: "", role: "atendente" });
+    setAddDialogOpen(false);
+    toast.success("Usuário adicionado com sucesso!");
+  };
+
+  const handleEditMember = () => {
+    if (!editMember || !formData.name.trim()) return;
+    setTeam((prev) =>
+      prev.map((m) =>
+        m.id === editMember.id
+          ? { ...m, name: formData.name, email: formData.email, role: formData.role, roleLabel: formData.role === "admin" ? "Administrador" : "Atendente", initials: formData.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) }
+          : m
+      )
+    );
+    setEditMember(null);
+    setFormData({ name: "", email: "", role: "atendente" });
+    toast.success("Usuário atualizado!");
+  };
+
+  const handleRemoveMember = (id: string) => {
+    setTeam((prev) => prev.filter((m) => m.id !== id));
+    toast.success("Usuário removido!");
+  };
+
+  const toggleActive = (id: string) => {
+    setTeam((prev) => prev.map((m) => m.id === id ? { ...m, active: !m.active } : m));
+  };
+
+  const openEdit = (m: TeamMember) => {
+    setFormData({ name: m.name, email: m.email, role: m.role });
+    setEditMember(m);
+  };
+
   return (
     <div className="space-y-6 max-w-3xl">
       <h2 className="text-2xl font-bold text-foreground">Configurações</h2>
