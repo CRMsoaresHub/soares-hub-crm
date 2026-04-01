@@ -242,6 +242,24 @@ export default function Pipeline() {
         </Dialog>
       </div>
 
+      {isAdmin && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Filtrar por:</span>
+          <Button size="sm" variant={attendantFilter === "todos" ? "default" : "outline"} className="text-xs h-7" onClick={() => setAttendantFilter("todos")}>
+            Todos
+          </Button>
+          {allUsers.filter((u) => u.role === "atendente").map((u) => (
+            <Button key={u.id} size="sm" variant={attendantFilter === u.id ? "default" : "outline"} className="text-xs h-7 gap-1" onClick={() => setAttendantFilter(u.id)}>
+              <Avatar className="h-4 w-4">
+                <AvatarFallback className="text-[7px] bg-primary/10 text-primary">{u.initials}</AvatarFallback>
+              </Avatar>
+              {u.name.split(" ")[0]}
+            </Button>
+          ))}
+        </div>
+      )}
+
       {!isAdmin && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
           <User className="h-4 w-4" />
