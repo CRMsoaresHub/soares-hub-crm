@@ -96,17 +96,22 @@ const tagColors: Record<string, string> = {
 };
 
 export default function Pipeline() {
-  const { currentUser, isAdmin } = useUser();
+  const { currentUser, isAdmin, allUsers } = useUser();
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [draggedLead, setDraggedLead] = useState<{ lead: Lead; fromColId: string } | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLead, setNewLead] = useState({ name: "", phone: "", tag: "WhatsApp" });
+  const [attendantFilter, setAttendantFilter] = useState("todos");
 
-  // Filter columns based on role
+  // Filter columns based on role + attendant filter
   const visibleColumns = columns.map((col) => ({
     ...col,
-    leads: isAdmin ? col.leads : col.leads.filter((l) => l.assignedTo === currentUser.id),
+    leads: isAdmin
+      ? attendantFilter === "todos"
+        ? col.leads
+        : col.leads.filter((l) => l.assignedTo === attendantFilter)
+      : col.leads.filter((l) => l.assignedTo === currentUser.id),
   }));
 
   const handleDragStart = (lead: Lead, fromColId: string) => {
