@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Search, Plus, Phone, Mail, MessageCircle, Calendar, Clock, User, StickyNote } from "lucide-react";
+import { useUser, mockUsers } from "@/contexts/UserContext";
 
 interface Lead {
   id: string;
@@ -19,18 +20,19 @@ interface Lead {
   origin: string;
   createdAt: string;
   notes: string;
+  assignedTo: string;
   history: { action: string; date: string; icon: "phone" | "message" | "mail" | "note" }[];
 }
 
 const initialLeads: Lead[] = [
   {
     id: "1", name: "Maria Silva", phone: "(11) 99999-1234", email: "maria@email.com",
-    status: "Novo", origin: "WhatsApp", createdAt: "28/03/2026", notes: "Interessada no plano premium.",
+    status: "Novo", origin: "WhatsApp", createdAt: "28/03/2026", notes: "Interessada no plano premium.", assignedTo: "u2",
     history: [{ action: "Lead adicionado via WhatsApp", date: "28/03 10:30", icon: "message" }],
   },
   {
     id: "2", name: "João Santos", phone: "(21) 98888-5678", email: "joao@email.com",
-    status: "Em Contato", origin: "Indicação", createdAt: "25/03/2026", notes: "Retornar na sexta-feira.",
+    status: "Em Contato", origin: "Indicação", createdAt: "25/03/2026", notes: "Retornar na sexta-feira.", assignedTo: "u3",
     history: [
       { action: "Ligação realizada — sem resposta", date: "27/03 14:00", icon: "phone" },
       { action: "Lead adicionado por indicação", date: "25/03 09:00", icon: "note" },
@@ -38,7 +40,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "3", name: "Ana Costa", phone: "(11) 96666-3456", email: "ana@email.com",
-    status: "Proposta Enviada", origin: "Site", createdAt: "20/03/2026", notes: "Aguardando retorno da proposta.",
+    status: "Proposta Enviada", origin: "Site", createdAt: "20/03/2026", notes: "Aguardando retorno da proposta.", assignedTo: "u2",
     history: [
       { action: "Proposta enviada por e-mail", date: "26/03 11:00", icon: "mail" },
       { action: "Reunião online realizada", date: "24/03 15:00", icon: "phone" },
@@ -47,7 +49,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "4", name: "Pedro Lima", phone: "(31) 97777-9012", email: "pedro@email.com",
-    status: "Negociação", origin: "Ligação", createdAt: "15/03/2026", notes: "Negociando desconto de 10%.",
+    status: "Negociação", origin: "Ligação", createdAt: "15/03/2026", notes: "Negociando desconto de 10%.", assignedTo: "u3",
     history: [
       { action: "Contraproposta recebida", date: "28/03 09:00", icon: "mail" },
       { action: "Proposta enviada", date: "22/03 16:00", icon: "mail" },
@@ -57,7 +59,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "5", name: "Carla Souza", phone: "(51) 93333-5678", email: "carla@email.com",
-    status: "Fechado", origin: "WhatsApp", createdAt: "10/03/2026", notes: "Contrato assinado. Cliente ativa.",
+    status: "Fechado", origin: "WhatsApp", createdAt: "10/03/2026", notes: "Contrato assinado. Cliente ativa.", assignedTo: "u2",
     history: [
       { action: "Contrato assinado", date: "27/03 10:00", icon: "note" },
       { action: "Proposta aceita", date: "25/03 14:00", icon: "mail" },
@@ -67,12 +69,12 @@ const initialLeads: Lead[] = [
   },
   {
     id: "6", name: "Ricardo Ferreira", phone: "(11) 91111-2222", email: "ricardo@email.com",
-    status: "Novo", origin: "Site", createdAt: "29/03/2026", notes: "",
+    status: "Novo", origin: "Site", createdAt: "29/03/2026", notes: "", assignedTo: "u3",
     history: [{ action: "Lead captado pelo formulário do site", date: "29/03 08:00", icon: "note" }],
   },
   {
     id: "7", name: "Fernanda Alves", phone: "(41) 94444-3333", email: "fernanda@email.com",
-    status: "Em Contato", origin: "E-mail", createdAt: "22/03/2026", notes: "Prefere contato por e-mail.",
+    status: "Em Contato", origin: "E-mail", createdAt: "22/03/2026", notes: "Prefere contato por e-mail.", assignedTo: "u2",
     history: [
       { action: "E-mail de follow-up enviado", date: "28/03 10:00", icon: "mail" },
       { action: "Primeiro e-mail enviado", date: "23/03 09:00", icon: "mail" },
@@ -81,7 +83,7 @@ const initialLeads: Lead[] = [
   },
   {
     id: "8", name: "Lucas Mendes", phone: "(61) 95555-4444", email: "lucas@email.com",
-    status: "Proposta Enviada", origin: "Indicação", createdAt: "18/03/2026", notes: "Indicado pelo Ricardo.",
+    status: "Proposta Enviada", origin: "Indicação", createdAt: "18/03/2026", notes: "Indicado pelo Ricardo.", assignedTo: "u3",
     history: [
       { action: "Proposta enviada", date: "26/03 14:00", icon: "mail" },
       { action: "Reunião presencial", date: "24/03 10:00", icon: "phone" },
@@ -108,6 +110,7 @@ const historyIcons = {
 };
 
 export default function Contatos() {
+  const { currentUser, isAdmin } = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -121,7 +124,8 @@ export default function Contatos() {
       l.phone.includes(search) ||
       l.email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "Todos" || l.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchUser = isAdmin || l.assignedTo === currentUser.id;
+    return matchSearch && matchStatus && matchUser;
   });
 
   const handleAddLead = () => {
@@ -135,6 +139,7 @@ export default function Contatos() {
       origin: newLead.origin,
       createdAt: new Date().toLocaleDateString("pt-BR"),
       notes: "",
+      assignedTo: currentUser.id,
       history: [{ action: "Lead adicionado manualmente", date: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }), icon: "note" }],
     };
     setLeads((prev) => [lead, ...prev]);
@@ -145,7 +150,14 @@ export default function Contatos() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-2xl font-bold text-foreground">Contatos</h2>
+      {!isAdmin && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          <User className="h-4 w-4" />
+          Exibindo apenas leads atribuídos a <span className="font-medium text-foreground">{currentUser.name}</span>
+        </div>
+      )}
+
+      <h2 className="text-2xl font-bold text-foreground">Contatos</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="gap-1.5">
@@ -212,8 +224,9 @@ export default function Contatos() {
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground">Nome</th>
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden md:table-cell">Telefone</th>
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Origem</th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground hidden sm:table-cell">Criado em</th>
+                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Origem</th>
+                   <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">Responsável</th>
+                   <th className="text-right py-3 px-4 font-medium text-muted-foreground hidden sm:table-cell">Criado em</th>
                 </tr>
               </thead>
               <tbody>
@@ -234,13 +247,14 @@ export default function Contatos() {
                     <td className="py-3 px-4">
                       <Badge variant="outline" className={`text-[11px] ${statusBadge[l.status] || ""}`}>{l.status}</Badge>
                     </td>
-                    <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{l.origin}</td>
-                    <td className="py-3 px-4 text-right text-muted-foreground hidden sm:table-cell">{l.createdAt}</td>
+                     <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{l.origin}</td>
+                     <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell text-sm">{mockUsers.find((u) => u.id === l.assignedTo)?.name || "—"}</td>
+                     <td className="py-3 px-4 text-right text-muted-foreground hidden sm:table-cell">{l.createdAt}</td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="py-12 text-center text-muted-foreground">Nenhum contato encontrado.</td>
+                 {filtered.length === 0 && (
+                   <tr>
+                     <td colSpan={6} className="py-12 text-center text-muted-foreground">Nenhum contato encontrado.</td>
                   </tr>
                 )}
               </tbody>
@@ -270,7 +284,8 @@ export default function Contatos() {
                     <div className="flex items-center gap-2 text-muted-foreground"><Phone className="h-3.5 w-3.5" /> {selectedLead.phone}</div>
                     <div className="flex items-center gap-2 text-muted-foreground"><Mail className="h-3.5 w-3.5" /> {selectedLead.email}</div>
                     <div className="flex items-center gap-2 text-muted-foreground"><User className="h-3.5 w-3.5" /> Origem: {selectedLead.origin}</div>
-                    <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> Criado em {selectedLead.createdAt}</div>
+                     <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> Criado em {selectedLead.createdAt}</div>
+                     <div className="flex items-center gap-2 text-muted-foreground"><User className="h-3.5 w-3.5" /> Responsável: {mockUsers.find((u) => u.id === selectedLead.assignedTo)?.name || "—"}</div>
                     <Badge variant="outline" className={`text-xs w-fit ${statusBadge[selectedLead.status] || ""}`}>{selectedLead.status}</Badge>
                   </div>
                 </div>

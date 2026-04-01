@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical } from "lucide-react";
+import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser, mockUsers } from "@/contexts/UserContext";
 
 interface Lead {
   id: string;
@@ -20,6 +21,7 @@ interface Lead {
   phone: string;
   tag: string;
   initials: string;
+  assignedTo: string;
 }
 
 interface Column {
@@ -37,9 +39,9 @@ const initialColumns: Column[] = [
     colorDot: "bg-info",
     bgCard: "border-l-info",
     leads: [
-      { id: "1", name: "Maria Silva", phone: "(11) 99999-1234", tag: "WhatsApp", initials: "MS" },
-      { id: "2", name: "Pedro Lima", phone: "(21) 98888-5678", tag: "Indicação", initials: "PL" },
-      { id: "3", name: "Lucas Mendes", phone: "(31) 97777-9012", tag: "Site", initials: "LM" },
+      { id: "1", name: "Maria Silva", phone: "(11) 99999-1234", tag: "WhatsApp", initials: "MS", assignedTo: "u2" },
+      { id: "2", name: "Pedro Lima", phone: "(21) 98888-5678", tag: "Indicação", initials: "PL", assignedTo: "u3" },
+      { id: "3", name: "Lucas Mendes", phone: "(31) 97777-9012", tag: "Site", initials: "LM", assignedTo: "u2" },
     ],
   },
   {
@@ -48,8 +50,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-warning",
     bgCard: "border-l-warning",
     leads: [
-      { id: "4", name: "Ana Costa", phone: "(11) 96666-3456", tag: "WhatsApp", initials: "AC" },
-      { id: "5", name: "Bruno Dias", phone: "(41) 95555-7890", tag: "Ligação", initials: "BD" },
+      { id: "4", name: "Ana Costa", phone: "(11) 96666-3456", tag: "WhatsApp", initials: "AC", assignedTo: "u2" },
+      { id: "5", name: "Bruno Dias", phone: "(41) 95555-7890", tag: "Ligação", initials: "BD", assignedTo: "u3" },
     ],
   },
   {
@@ -58,8 +60,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-primary",
     bgCard: "border-l-primary",
     leads: [
-      { id: "6", name: "João Santos", phone: "(11) 94444-1234", tag: "E-mail", initials: "JS" },
-      { id: "7", name: "Carla Souza", phone: "(51) 93333-5678", tag: "WhatsApp", initials: "CS" },
+      { id: "6", name: "João Santos", phone: "(11) 94444-1234", tag: "E-mail", initials: "JS", assignedTo: "u3" },
+      { id: "7", name: "Carla Souza", phone: "(51) 93333-5678", tag: "WhatsApp", initials: "CS", assignedTo: "u2" },
     ],
   },
   {
@@ -68,7 +70,7 @@ const initialColumns: Column[] = [
     colorDot: "bg-accent-foreground",
     bgCard: "border-l-accent-foreground",
     leads: [
-      { id: "8", name: "Fernanda Alves", phone: "(11) 92222-9012", tag: "Reunião", initials: "FA" },
+      { id: "8", name: "Fernanda Alves", phone: "(11) 92222-9012", tag: "Reunião", initials: "FA", assignedTo: "u2" },
     ],
   },
   {
@@ -77,8 +79,8 @@ const initialColumns: Column[] = [
     colorDot: "bg-primary",
     bgCard: "border-l-primary",
     leads: [
-      { id: "9", name: "Ricardo Ferreira", phone: "(21) 91111-3456", tag: "Contrato", initials: "RF" },
-      { id: "10", name: "Patrícia Rocha", phone: "(11) 90000-7890", tag: "Contrato", initials: "PR" },
+      { id: "9", name: "Ricardo Ferreira", phone: "(21) 91111-3456", tag: "Contrato", initials: "RF", assignedTo: "u3" },
+      { id: "10", name: "Patrícia Rocha", phone: "(11) 90000-7890", tag: "Contrato", initials: "PR", assignedTo: "u2" },
     ],
   },
 ];
@@ -94,11 +96,18 @@ const tagColors: Record<string, string> = {
 };
 
 export default function Pipeline() {
+  const { currentUser, isAdmin } = useUser();
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [draggedLead, setDraggedLead] = useState<{ lead: Lead; fromColId: string } | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLead, setNewLead] = useState({ name: "", phone: "", tag: "WhatsApp" });
+
+  // Filter columns based on role
+  const visibleColumns = columns.map((col) => ({
+    ...col,
+    leads: isAdmin ? col.leads : col.leads.filter((l) => l.assignedTo === currentUser.id),
+  }));
 
   const handleDragStart = (lead: Lead, fromColId: string) => {
     setDraggedLead({ lead, fromColId });
@@ -151,6 +160,7 @@ export default function Pipeline() {
       phone: newLead.phone || "(00) 00000-0000",
       tag: newLead.tag,
       initials,
+      assignedTo: currentUser.id,
     };
 
     setColumns((prev) =>
@@ -227,8 +237,15 @@ export default function Pipeline() {
         </Dialog>
       </div>
 
+      {!isAdmin && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          <User className="h-4 w-4" />
+          Exibindo apenas leads atribuídos a <span className="font-medium text-foreground">{currentUser.name}</span>
+        </div>
+      )}
+
       <div className="flex gap-4 overflow-x-auto pb-4">
-        {columns.map((col) => (
+        {visibleColumns.map((col) => (
           <div
             key={col.id}
             className={`min-w-[260px] w-[260px] flex-shrink-0 rounded-xl p-3 transition-colors ${
@@ -272,7 +289,10 @@ export default function Pipeline() {
                           <Phone className="h-3 w-3" />
                           {lead.phone}
                         </p>
-                        <div className="mt-2 flex items-center justify-between">
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          Resp: {mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}
+                        </p>
+                        <div className="mt-1.5 flex items-center justify-between">
                           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${tagColors[lead.tag] || ""}`}>
                             {lead.tag}
                           </Badge>
