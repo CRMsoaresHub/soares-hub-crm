@@ -31,8 +31,12 @@ const initialTeam: TeamMember[] = [
 ];
 
 export default function Configuracoes() {
+  const { currentUser, isAdmin } = useUser();
   const [selectedPlan, setSelectedPlan] = useState<"basico" | "pro">("basico");
-
+  const [team, setTeam] = useState<TeamMember[]>(initialTeam);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editMember, setEditMember] = useState<TeamMember | null>(null);
+  const [formData, setFormData] = useState({ name: "", email: "", role: "atendente" as UserRole });
   const handleSave = (section: string) => {
     toast.success(`${section} salvo com sucesso!`);
   };
