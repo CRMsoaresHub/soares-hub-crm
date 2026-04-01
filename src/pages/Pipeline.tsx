@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical, User } from "lucide-react";
+import { Plus, Phone, MessageCircle, MoreHorizontal, GripVertical, User, Filter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -96,17 +96,22 @@ const tagColors: Record<string, string> = {
 };
 
 export default function Pipeline() {
-  const { currentUser, isAdmin } = useUser();
+  const { currentUser, isAdmin, allUsers } = useUser();
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [draggedLead, setDraggedLead] = useState<{ lead: Lead; fromColId: string } | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newLead, setNewLead] = useState({ name: "", phone: "", tag: "WhatsApp" });
+  const [attendantFilter, setAttendantFilter] = useState("todos");
 
-  // Filter columns based on role
+  // Filter columns based on role + attendant filter
   const visibleColumns = columns.map((col) => ({
     ...col,
-    leads: isAdmin ? col.leads : col.leads.filter((l) => l.assignedTo === currentUser.id),
+    leads: isAdmin
+      ? attendantFilter === "todos"
+        ? col.leads
+        : col.leads.filter((l) => l.assignedTo === attendantFilter)
+      : col.leads.filter((l) => l.assignedTo === currentUser.id),
   }));
 
   const handleDragStart = (lead: Lead, fromColId: string) => {
@@ -237,6 +242,24 @@ export default function Pipeline() {
         </Dialog>
       </div>
 
+      {isAdmin && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Filtrar por:</span>
+          <Button size="sm" variant={attendantFilter === "todos" ? "default" : "outline"} className="text-xs h-7" onClick={() => setAttendantFilter("todos")}>
+            Todos
+          </Button>
+          {allUsers.filter((u) => u.role === "atendente").map((u) => (
+            <Button key={u.id} size="sm" variant={attendantFilter === u.id ? "default" : "outline"} className="text-xs h-7 gap-1" onClick={() => setAttendantFilter(u.id)}>
+              <Avatar className="h-4 w-4">
+                <AvatarFallback className="text-[7px] bg-primary/10 text-primary">{u.initials}</AvatarFallback>
+              </Avatar>
+              {u.name.split(" ")[0]}
+            </Button>
+          ))}
+        </div>
+      )}
+
       {!isAdmin && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
           <User className="h-4 w-4" />
@@ -289,9 +312,12 @@ export default function Pipeline() {
                           <Phone className="h-3 w-3" />
                           {lead.phone}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-1">
-                          Resp: {mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}
-                        </p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Avatar className="h-4 w-4">
+                            <AvatarFallback className="text-[7px] bg-info/15 text-info">{mockUsers.find((u) => u.id === lead.assignedTo)?.initials || "?"}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-[10px] text-muted-foreground truncate">{mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}</span>
+                        </div>
                         <div className="mt-1.5 flex items-center justify-between">
                           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${tagColors[lead.tag] || ""}`}>
                             {lead.tag}
