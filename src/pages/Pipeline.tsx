@@ -312,9 +312,12 @@ export default function Pipeline() {
                           <Phone className="h-3 w-3" />
                           {lead.phone}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-1">
-                          Resp: {mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}
-                        </p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Avatar className="h-4 w-4">
+                            <AvatarFallback className="text-[7px] bg-info/15 text-info">{mockUsers.find((u) => u.id === lead.assignedTo)?.initials || "?"}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-[10px] text-muted-foreground truncate">{mockUsers.find((u) => u.id === lead.assignedTo)?.name || "—"}</span>
+                        </div>
                         <div className="mt-1.5 flex items-center justify-between">
                           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${tagColors[lead.tag] || ""}`}>
                             {lead.tag}
